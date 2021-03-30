@@ -1,0 +1,154 @@
+\documentclass[12pt,letterpaper]{article}
+\usepackage{fullpage}
+\usepackage[top=2cm, bottom=4.5cm, left=2.5cm, right=2.5cm]{geometry}
+\usepackage{amsmath,amsthm,amsfonts,amssymb,amscd}
+\usepackage{lastpage}
+\usepackage{enumerate}
+\usepackage[shortlabels]{enumitem}
+
+
+\usepackage{fancyhdr}
+\usepackage{mathrsfs}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{listings}
+
+% \usepackage[margin=1in]{geometry} 
+\usepackage{bm}
+\newcommand{\matr}[1]{\bm{#1}}     % ISO complying version
+\newcommand{\vect}[1]{\bm{#1}}     % ISO complying version
+\DeclareMathOperator{\softmax}{softmax}
+
+
+\usepackage[hyphens]{url}
+\usepackage[colorlinks]{hyperref}
+\usepackage{enumitem}
+
+\makeatletter
+\newcommand\RedeclareMathOperator{%
+  \@ifstar{\def\rmo@s{m}\rmo@redeclare}{\def\rmo@s{o}\rmo@redeclare}%
+}
+% this is taken from \renew@command
+\newcommand\rmo@redeclare[2]{%
+  \begingroup \escapechar\m@ne\xdef\@gtempa{{\string#1}}\endgroup
+  \expandafter\@ifundefined\@gtempa
+     {\@latex@error{\noexpand#1undefined}\@ehc}%
+     \relax
+  \expandafter\rmo@declmathop\rmo@s{#1}{#2}}
+% This is just \@declmathop without \@ifdefinable
+\newcommand\rmo@declmathop[3]{%
+  \DeclareRobustCommand{#2}{\qopname\newmcodes@#1{#3}}%
+}
+\@onlypreamble\RedeclareMathOperator
+\makeatother
+
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\V}{\mathbb{V}}
+\RedeclareMathOperator{\Pr}{\mathbb{P}}
+
+
+\hypersetup{%
+  colorlinks=true,
+  linkcolor=blue,
+  linkbordercolor={0 0 1}
+}
+ 
+\renewcommand\lstlistingname{Algorithm}
+\renewcommand\lstlistlistingname{Algorithms}
+\def\lstlistingautorefname{Alg.}
+
+\lstdefinestyle{Python}{
+    language        = Python,
+    frame           = lines, 
+    basicstyle      = \footnotesize,
+    keywordstyle    = \color{blue},
+    stringstyle     = \color{green},
+    commentstyle    = \color{red}\ttfamily
+}
+
+\setlength{\parindent}{0.0in}
+\setlength{\parskip}{0.05in}
+
+% Edit these as appropriate
+\newcommand\course{DS-GA 1008: Deep Learning, Spring 2020}
+\newcommand\hwnumber{1}                  % <-- homework number
+
+\pagestyle{fancyplain}
+\headheight 55pt
+%\lhead{\NetIDa}
+% \lhead{\NetIDa\\\NetIDb}                 % <-- Comment this line out for problem sets (make sure you are person #1)
+\chead{\textbf{\Large \course \\ Homework Assignment \hwnumber}\\ \large Due: Tuesday, February 18th, 2020 at 7pm}
+%\rhead{\course \\ \today}
+\lfoot{}
+\cfoot{}
+\rfoot{\small\thepage}
+\headsep 1.5em
+
+\begin{document}
+\begin{center}
+\texttt{He who learns but does not think is lost. \\He who thinks but does not learn is in great danger. \\ Confucius (551 - 479 BC)}
+
+\end{center}
+
+\section*{1. Backprop}
+
+Backpropagation or ``backward propagation through errors'' is a method which calculates the gradient of the loss function of a neural network with respect to its weights. 
+
+\subsection*{1.1. Affine Module}
+The chain rule is at the heart of backpropagation. Suppose we are given $\vect{x} \in \mathbb{R}^2$ and that we use an affine transformation with parameters
+$\matr{W} \in \mathbb{R}^{2\times 2}$ and $\vect{b}\in \mathbb{R}^2$ defined by:
+\begin{align}
+\vect{y} = \matr{W} \vect{x} + \vect{b},
+\end{align}
+\begin{enumerate}[(a)]
+    \item Suppose an arbitrary cost function $C(\vect{y})$ and that we are given the gradient $\partial C / \partial \vect{y}$. Give an expression for $ \partial C / \partial \matr{W}$ and $ \partial C / \partial \vect{b}$ in terms of $ \partial C / \partial \vect{y}$ and $\vect{x}$ using the chain rule.
+    \item If we define a new cost $C_2(\vect{y}) = 3*C(\vect{y})$, do we know how our gradients with respect to $\vect{W,b}$ change without knowing the particular form of $C(\vect{y})$ or $ \partial C / \partial \vect{y}$?
+\end{enumerate}
+
+
+
+\subsection*{1.2. Softmax Module}
+The softmax expression is at the crux of multi-class classification.
+After receiving $K$ unconstrained values in the form of a vector $\vect{x} \in \mathbb{R}^K$, the softmax function normalizes these values to $K$ positive values that all sum to $1$. The softmax is defined as
+\begin{align}
+\vect{y}=\softmax_\beta(\vect{x}),
+\quad 
+ y_k = \frac{\exp(\beta x_k)}{\sum_{n} \exp(\beta x_{n})},
+\end{align}
+where $\sum_y^K y_k = 1$, $y_k \geq 0$ for all $k$, and $\exp(z)=e^z$. We usually let the softmax input $\vect{x} \in \mathbb{R}^K$ be the output of a preceding module (some feature representation) whose input is a datapoint $d$. Then we interpret $y_k$ as the probability that datapoint $d$ belongs to class $k$.\\
+
+\noindent Since this module can be connected to others in backprop using the chain rule, we just need to compute the softmax's gradient in isolation. What is the expression for $\partial y_i / \partial x_j$?
+(Hint: Answer differs when $i = j$ and $i \neq j$).
+\newpage
+\section*{2. PyTorch}
+If you haven't already, install most recent versions of 
+\href{https://www.python.org/downloads/}{Python} (3.6 or higher), \href{https://pytorch.org/}{PyTorch} (we recommend using \href{https://conda.io/projects/conda/en/latest/user-guide/install/index.html}{conda} for the installation), and \href{https://jupyter.org/install.html}{Jupyter}.\\
+
+\noindent Complete the programming exercises provided in the homework 1 directory of the course Google Drive folder (\href{https://drive.google.com/drive/u/2/folders/1CQ0Jiti5st01OOuSfFljyoe_z-366y4y}{link}).
+
+\section*{3. Evaluation}
+Homework is worth a total of 100 points.
+\begin{itemize}
+    \item Part 1 - 50 points
+    \item Part 2 - 50 points
+\end{itemize}
+
+\section*{4. Submission}
+You are required to write up your solutions to Part 1 using markdown or \LaTeX.
+
+Please submit the homework on the NYU classes assignment page. Please upload the following:
+\begin{itemize}
+    \item \texttt{First-name\_Last-name\_netID\_A1.tex} (or \texttt{.md}) file for Part 1
+    \item \texttt{First-name\_Last-name\_netID\_A1.pdf} file for Part 1
+    \item \texttt{First-name\_Last-name\_netID\_A1\_code.ipynb} file for Part 2
+    \item 
+    \texttt{First-name\_Last-name\_netID\_A1\_code.pdf} file for Part 2\\
+    (you can use Jupyter Notebook's ``File $\to$ Download as $\to$ PDF" feature)
+\end{itemize}
+
+\section*{5. Disclaimers}
+You are allowed to discuss problems with other students in the class but have to write up your solutions on your own. 
+
+As feedback might be provided during the first days, the current homework assignment might be undergoing some minor changes. We'll notify you if this happens.
+
+\end{document}

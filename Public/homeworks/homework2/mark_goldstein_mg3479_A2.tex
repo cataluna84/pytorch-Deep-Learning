@@ -1,0 +1,180 @@
+\documentclass[12pt,letterpaper]{article}
+\usepackage{fullpage}
+\usepackage[top=2cm, bottom=4.5cm, left=2.5cm, right=2.5cm]{geometry}
+\usepackage{amsmath,amsthm,amsfonts,amssymb,amscd}
+\usepackage{lastpage}
+\usepackage{enumerate}
+\usepackage{fancyhdr}
+\usepackage{mathrsfs}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{todonotes}
+
+% \usepackage[margin=1in]{geometry} 
+\usepackage{bm}
+\newcommand{\matr}[1]{\bm{#1}}     % ISO complying version
+\newcommand{\vect}[1]{\bm{#1}}     % ISO complying version
+\usepackage[hyphens]{url}
+\usepackage[colorlinks]{hyperref}
+\usepackage{enumitem}
+
+\makeatletter
+\newcommand\RedeclareMathOperator{%
+  \@ifstar{\def\rmo@s{m}\rmo@redeclare}{\def\rmo@s{o}\rmo@redeclare}%
+}
+% this is taken from \renew@command
+\newcommand\rmo@redeclare[2]{%
+  \begingroup \escapechar\m@ne\xdef\@gtempa{{\string#1}}\endgroup
+  \expandafter\@ifundefined\@gtempa
+     {\@latex@error{\noexpand#1undefined}\@ehc}%
+     \relax
+  \expandafter\rmo@declmathop\rmo@s{#1}{#2}}
+% This is just \@declmathop without \@ifdefinable
+\newcommand\rmo@declmathop[3]{%
+  \DeclareRobustCommand{#2}{\qopname\newmcodes@#1{#3}}%
+}
+\@onlypreamble\RedeclareMathOperator
+\makeatother
+
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\V}{\mathbb{V}}
+\RedeclareMathOperator{\Pr}{\mathbb{P}}
+
+
+\hypersetup{%
+  colorlinks=true,
+  linkcolor=blue,
+  linkbordercolor={0 0 1}
+}
+ 
+\renewcommand\lstlistingname{Algorithm}
+\renewcommand\lstlistlistingname{Algorithms}
+\def\lstlistingautorefname{Alg.}
+
+\lstdefinestyle{Python}{
+    language        = Python,
+    frame           = lines, 
+    basicstyle      = \footnotesize,
+    keywordstyle    = \color{blue},
+    stringstyle     = \color{green},
+    commentstyle    = \color{red}\ttfamily
+}
+
+\setlength{\parindent}{0.0in}
+\setlength{\parskip}{0.05in}
+
+% Edit these as appropriate
+\newcommand\course{DS-GA 1008: Deep Learning, Spring 2020}
+\newcommand\hwnumber{2}                  % <-- homework number
+% \newcommand\NetIDa{netid19823}           % <-- NetID of person #1
+% \newcommand\NetIDb{netid12038}           % <-- NetID of person #2 (Comment this line out for problem sets)
+
+\pagestyle{fancyplain}
+\headheight 55pt
+%\lhead{\NetIDa}
+% \lhead{\NetIDa\\\NetIDb}                 % <-- Comment this line out for problem sets (make sure you are person #1)
+\chead{\textbf{\Large \course \\ Homework Assignment \hwnumber}\\ \large Due: Friday, March 6th, 2020 at 11:59pm}
+%\rhead{\course \\ \today}
+\lfoot{}
+\cfoot{}
+\rfoot{\small\thepage}
+\headsep 1.5em
+
+\begin{document}
+\begin{center}
+\texttt{The search for truth is more precious than its possession.\\  Albert Einstein (1879 - 1955)}
+\end{center}
+
+\section*{1. Fundamentals}
+\subsection*{1.1. Convolution}
+Table \ref{tab1} depicts two matrices. The one on the left represents an $5\times 5$ single-channel image $\matr{A}$. The one on the right
+ represents a $3\times 3$ convolution kernel $\matr{B}$. 
+\begin{itemize}
+    \item[(a)] What is the dimensionality of the output if we forward propagate the image over the given convolution kernel with no padding and stride of 1? 
+  
+    \item[(b)] Give a general formula of the output width $O$ in terms of the input width $I$, kernel width $K$, stride $S$, and padding $P$ (both in the beginning and in the end). Note that the same formula holds for the height. Make sure that your answer in part (a) is consistent with your formula. 
+
+    \item[(c)] Compute the output $\matr{C}$ of forward propagating the image over the
+given convolution kernel. Assume that the bias term of the convolution is zero.
+
+    \item[(d)] Suppose the gradient backpropagated from the layers above this layer is a $3\times 3$ matrix of all 1s. Write the value of the gradient with respect to the input image backpropagated out of this layer.
+    That is, you are given that $\frac{\partial E}{\partial \matr{C}_{ij}} = 1$ for some scalar error $E$ and $i,j\in\{1,2,3\}$. You need to compute $\frac{\partial E}{\partial \matr{A}_{ij}}$ for  $i,j\in\{1, \ldots, 5\}$. The chain rule should help!
+     
+     
+\end{itemize}
+ 
+\begin{table}[!ht]
+    \centering
+    $\matr{A}$ =  \begin{tabular}{|c|c|c|c|c|} 
+    \hline
+       4 & 5 & 2 & 2 & 1 \\ \hline 
+       3 & 3 & 2 & 2 & 4 \\ \hline
+       4 & 3 & 4 & 1 & 1 \\ \hline 
+       5 & 1 & 4 & 1 & 2 \\ \hline
+       5 & 1 & 3 & 1 & 4 \\ \hline
+    \end{tabular}\hspace{1cm}
+    $\matr{B}$ = \begin{tabular}{|c|c|c|} 
+    \hline
+       4 & 3 & 3 \\ \hline 
+       5 & 5 & 5 \\ \hline
+       2 & 4 & 3 \\ \hline 
+    \end{tabular}
+    \caption{Image Matrix ($5\times 5$) and a convolution kernel ($3\times 3$).}
+    \label{tab1}
+   
+\end{table}
+
+\newpage 
+
+\subsection*{1.2. Pooling}
+Pooling is a technique for sub-sampling and comes in different flavors, for example max-pooling, average pooling, LP-pooling. 
+\begin{itemize}
+    \item[(a)] List the \texttt{torch.nn} modules for the 2D versions of these pooling techniques and read what they do.
+
+    \item[(b)] Denote the $k$-th input feature maps to a pooling module as $\matr{X}^k \in \mathbb{R}^{H_{\textrm{in}}\times W_{\textrm{in}}} $ where $H_{\textrm{in}}$ and $W_{\text{in}}$ represent the input height and width, respectively. Let $\matr{Y}^k \in \mathbb{R}^{H_{\text{out}}\times W_{\textrm{out}}}$ denote the $k$-th output feature map of the module where $H_{\textrm{out}}$ and $W_{\textrm{out}}$ represent the output height and width, respectively. Let $S^{k}_{i,j}$ be a list of the indexes of elements in the sub-region of $X^k $ used for generating $\matr{Y}^k_{i,j}$, the $(i,j)$-th entry of $\matr{Y}^{k}$. 
+    Using this notation, give formulas for $\matr{Y}^k_{i,j} $ from three pooling modules.
+   
+    \item[(c)] Write out the result of applying a max-pooling module with kernel size of 2 and stride of 1 to $\matr{C}$ from Part 1.1.
+  
+    \item[(d)] Show how max-pooling and average pooling can be expressed in terms of LP-pooling.
+   
+\end{itemize}
+
+
+
+\newpage
+\section*{2. PyTorch}
+If you haven't already, install most recent versions of 
+\href{https://www.python.org/downloads/}{Python} (3.6 or higher), \href{https://pytorch.org/}{PyTorch} (we recommend using \href{https://conda.io/projects/conda/en/latest/user-guide/install/index.html}{conda} for the installation), and \href{https://jupyter.org/install.html}{Jupyter}.\\
+
+\noindent Complete the programming exercises provided in the homework $\hwnumber$ directory of the course Google Drive folder (\href{https://drive.google.com/drive/u/2/folders/1aYUXkJxdoNayK9xEo5IODbuxP1gMdSds}{link}).
+
+\section*{3. Evaluation}
+Homework is worth a total of 100 points.
+\begin{itemize}
+    \item Part 1 - 50 points
+    \item Part 2 - 50 points
+\end{itemize}
+
+
+\section*{4. Submission}
+You are required to write up your solutions to Part 1 using markdown or \LaTeX.
+
+Please submit the homework on the NYU classes assignment page. Please upload the following:
+\begin{itemize}
+    \item \texttt{First-name\_Last-name\_netID\_A2.tex} (or \texttt{.md}) file for Part 1
+    \item \texttt{First-name\_Last-name\_netID\_A2.pdf} file for Part 1
+    \item \texttt{First-name\_Last-name\_netID\_A2\_code.ipynb} file for Part 2
+    \item 
+    \texttt{First-name\_Last-name\_netID\_A2\_code.pdf} file for Part 2\\
+    (you can use Jupyter Notebook's ``File $\to$ Download as $\to$ PDF" feature)
+\end{itemize}
+
+\section*{5. Disclaimers}
+You are allowed to discuss problems with other students in the class but have to write up your solutions on your own. 
+
+As feedback might be provided during the first days, the current homework assignment might be undergoing some minor changes. We'll notify you if this happens.
+
+
+\end{document}

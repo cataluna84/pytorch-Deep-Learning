@@ -1,0 +1,178 @@
+\documentclass[12pt,letterpaper]{article}
+\usepackage{fullpage}
+\usepackage[top=2cm, bottom=4.5cm, left=2.5cm, right=2.5cm]{geometry}
+\usepackage{amsmath,amsthm,amsfonts,amssymb,amscd}
+\usepackage{lastpage}
+\usepackage{enumerate}
+\usepackage{fancyhdr}
+\usepackage{mathrsfs}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{todonotes}
+
+% \usepackage[margin=1in]{geometry} 
+\usepackage{bm}
+\newcommand{\matr}[1]{\bm{#1}}     % ISO complying version
+\newcommand{\vect}[1]{\bm{#1}}     % ISO complying version
+\usepackage[hyphens]{url}
+\usepackage[colorlinks]{hyperref}
+\usepackage{enumitem}
+
+\makeatletter
+\newcommand\RedeclareMathOperator{%
+  \@ifstar{\def\rmo@s{m}\rmo@redeclare}{\def\rmo@s{o}\rmo@redeclare}%
+}
+% this is taken from \renew@command
+\newcommand\rmo@redeclare[2]{%
+  \begingroup \escapechar\m@ne\xdef\@gtempa{{\string#1}}\endgroup
+  \expandafter\@ifundefined\@gtempa
+     {\@latex@error{\noexpand#1undefined}\@ehc}%
+     \relax
+  \expandafter\rmo@declmathop\rmo@s{#1}{#2}}
+% This is just \@declmathop without \@ifdefinable
+\newcommand\rmo@declmathop[3]{%
+  \DeclareRobustCommand{#2}{\qopname\newmcodes@#1{#3}}%
+}
+\@onlypreamble\RedeclareMathOperator
+\makeatother
+
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\V}{\mathbb{V}}
+\RedeclareMathOperator{\Pr}{\mathbb{P}}
+
+
+\hypersetup{%
+  colorlinks=true,
+  linkcolor=blue,
+  linkbordercolor={0 0 1}
+}
+ 
+\renewcommand\lstlistingname{Algorithm}
+\renewcommand\lstlistlistingname{Algorithms}
+\def\lstlistingautorefname{Alg.}
+
+\lstdefinestyle{Python}{
+    language        = Python,
+    frame           = lines, 
+    basicstyle      = \footnotesize,
+    keywordstyle    = \color{blue},
+    stringstyle     = \color{green},
+    commentstyle    = \color{red}\ttfamily
+}
+
+\setlength{\parindent}{0.0in}
+\setlength{\parskip}{0.05in}
+
+% Edit these as appropriate
+\newcommand\course{DS-GA 1008: Deep Learning, Spring 2020}
+\newcommand\hwnumber{3}                  % <-- homework number
+% \newcommand\NetIDa{netid19823}           % <-- NetID of person #1
+% \newcommand\NetIDb{netid12038}           % <-- NetID of person #2 (Comment this line out for problem sets)
+
+\pagestyle{fancyplain}
+\headheight 55pt
+%\lhead{\NetIDa}
+% \lhead{\NetIDa\\\NetIDb}                 % <-- Comment this line out for problem sets (make sure you are person #1)
+\chead{\textbf{\Large \course \\ Homework Assignment \hwnumber}\\ \large Due: Tuesday, March 31, 2020 at 11:59pm}
+%\rhead{\course \\ \today}
+\lfoot{}
+\cfoot{}
+\rfoot{\small\thepage}
+\headsep 1.5em
+
+\begin{document}
+\begin{center}
+\texttt{If you get, give. If you learn, teach. Maya Angelou (1928 - 2014)}
+\end{center}
+
+
+\section*{1. Fundamentals}
+
+
+\subsection*{1.1. Convolutions}
+
+For the following transformations from dimensionalities $A$ to $B$, specify any combination of convolutions (with particular choices of kernels, stride), pooling, and other related modules that could get you from dimensionality $A$ to $B$. [3 pts]
+\begin{enumerate}
+    \item A:$(64,111,111)$ $\to$ B:$(4,234,234)$
+    \item A:$(256,56,56)$ $\to$ B:$(14,126,126)$  
+    \item A:$(256,56,56)$ $\to$ B:$(42,72,72)$
+\end{enumerate}
+              
+\subsection*{1.2. Dropout}
+Dropout is a very popular regularization technique. 
+\begin{itemize}
+    \item[(a)]  List the \texttt{torch.nn} module corresponding to 2D dropout. [2 pts]
+    \newline
+    \item[(b)] Read on what dropout is and give a short explanation on what it does and why it is useful. You may find this chapter  \href{https://www.deeplearningbook.org/contents/regularization.html}{https://www.deeplearningbook.org/contents/regularization.html} and the \href{http://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf}{original paper} helpful. [6 pts]
+    
+
+  
+\end{itemize}
+\subsection*{1.3. Batch Norm}
+\begin{itemize}
+    \item[(a)]  What does mini-batch refer to in the context of deep learning? [3 pts]
+    \newline
+    
+    \item[(b)] Read on what batch norm  is and give a short explanation on what it does and why it is useful. You might find \href{https://towardsdatascience.com/batch-normalization-in-neural-networks-1ac91516821c}{this blog post} and the
+    \href{https://arxiv.org/pdf/1502.03167.pdf}{original paper} helpful. [6 pts] 
+\end{itemize}
+
+\newpage 
+
+\section*{2. Language Modeling}
+
+This exercise explores the code from the \href{https://github.com/pytorch/examples/tree/master/word_language_model}{\texttt{word\_language\_model}} example in \emph{PyTorch}.
+\begin{enumerate}
+\item[(a)] Go through the code and draw a block diagram / flow chart (see \href{https://www.sharelatex.com/blog/2013/08/29/tikz-series-pt3.html}{this tutorial on flowcharts in latex}) which highlights the main interacting components, illustrates their functionality, and provides an estimate of their computational time percentage (rough profiling). [5 pts]
+
+\item[(b)] Find and explain where and how the back-propagation through time (BPTT) takes place (you may need to delve into \emph{PyTorch} source code). [5 pts]
+\newline
+
+\item[(c)] Describe why we need the \texttt{repackage\_hidden(h)} function, and how it works. [5 pts]
+\newline
+
+\item[(d)] Why is there a \texttt{--tied (tie the word embedding and softmax weights)} option? [5 pts]
+\newline\
+
+\item[(e)] Compare LSTM and GRU performance (validation perplexity and training time) for different values of the following parameters: number of epochs, number of layers, hidden units size, input embedding dimensionality, BPTT temporal interval, and non-linearities (pick just 3 of these parameters and experiment with 2-3 different values for each). [5 pts]
+
+\item[(f)] Why do we compute performance on a test set as well? What is this number good for? [5 pts]
+
+\end{enumerate}
+
+\newpage
+\section*{3. PyTorch}
+If you haven't already, install most recent versions of 
+\href{https://www.python.org/downloads/}{Python} (3.6 or higher), \href{https://pytorch.org/}{PyTorch} (we recommend using \href{https://conda.io/projects/conda/en/latest/user-guide/install/index.html}{conda} for the installation), and \href{https://jupyter.org/install.html}{Jupyter}.\\
+
+\noindent Complete the programming exercises provided in the homework $\hwnumber$ directory of the course Google Drive folder (\href{https://drive.google.com/drive/folders/1afl1U32OooudxiiFxqzLAN1xpznfKgCz?usp=sharing}{link}).
+
+\section*{4. Evaluation}
+Homework is worth a total of 100 points.
+\begin{itemize}
+    \item Part 1 - 50 points
+    \item Part 2 - 50 points
+\end{itemize}
+
+
+\section*{5. Submission}
+You are required to write up your solutions to Part 1 using markdown or \LaTeX.
+
+Please submit the homework on the NYU classes assignment page. Please upload the following:
+\begin{itemize}
+    \item \texttt{First-name\_Last-name\_netID\_A3.tex} (or \texttt{.md}) file for Part 1
+    \item \texttt{First-name\_Last-name\_netID\_A3.pdf} file for Part 1
+    \item \texttt{First-name\_Last-name\_netID\_A3\_code.ipynb} file for Part 2
+    \item 
+    \texttt{First-name\_Last-name\_netID\_A3\_code.pdf} file for Part 2\\
+    (you can use Jupyter Notebook's ``File $\to$ Download as $\to$ PDF" feature)
+\end{itemize}
+
+\section*{6. Disclaimers}
+You are allowed to discuss problems with other students in the class but have to write up your solutions on your own. 
+
+As feedback might be provided during the first days, the current homework assignment might be undergoing some minor changes. We'll notify you if this happens.
+
+
+\end{document}

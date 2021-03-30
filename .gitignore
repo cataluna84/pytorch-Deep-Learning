@@ -24,3 +24,4 @@ data
 .jekyll-cache
 _site
 .vscode
+/Public/competition_/
