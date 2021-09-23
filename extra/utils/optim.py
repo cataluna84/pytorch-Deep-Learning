@@ -33,10 +33,12 @@ class Optim(Optimizer):
     def my_step(self, p, state, group):
       raise NotImplementedError
 
+
 plt.ioff() #(interactive mode)
 
-A = torch.tensor([[1.0, 0.0,], [0.0, 5.0]])
-b = torch.tensor([0.0, 0.0])
+A = torch.tensor([[1.0, 0.0,], [0.0, 5.0]], dtype=torch.float64)
+b = torch.tensor([0.0, 0.0], dtype=torch.float64)
+
 
 def objective(x, y):
     xy = torch.tensor([x, y])
